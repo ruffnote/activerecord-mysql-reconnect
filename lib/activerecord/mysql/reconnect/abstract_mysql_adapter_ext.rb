@@ -1,10 +1,13 @@
 module Activerecord::Mysql::Reconnect::ExecuteWithReconnect
-  def execute(sql, name = nil)
+  private
+
+  # https://github.com/rails/rails/blob/v7.0.4/activerecord/lib/active_record/connection_adapters/abstract_mysql_adapter.rb#L626-L635
+  def raw_execute(sql, name, async: false)
     retryable(sql, name) do |sql_names|
       retval = nil
 
       sql_names.each do |s, n|
-        retval = super(s, n)
+        retval = super(s, n, async:)
       end
 
       retval
