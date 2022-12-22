@@ -1,17 +1,25 @@
 require 'mysql2'
 
 class MysqlServer
-  CLI_ARGS = '-u root -P 14407 -h 127.0.0.1'
+  CLI_ARGS = "-u root -ppassword -h 127.0.0.1"
   REDIRECT_TO_DEV_NULL = ENV['DEBUG'] == '1' ? '' : '> /dev/null 2> /dev/null'
 
   class << self
     def start
-      system("docker-compose up -d #{REDIRECT_TO_DEV_NULL}")
+      if ENV['CI']
+        system("sudo /etc/init.d/mysql start #{REDIRECT_TO_DEV_NULL}")
+      else
+        system("docker-compose up -d #{REDIRECT_TO_DEV_NULL}")
+      end
       wait_mysql_start
     end
 
     def stop
-      system("docker-compose stop #{REDIRECT_TO_DEV_NULL}")
+      if ENV['CI']
+        system("sudo /etc/init.d/mysql stop #{REDIRECT_TO_DEV_NULL}")
+      else
+        system("docker-compose stop #{REDIRECT_TO_DEV_NULL}")
+      end
     end
 
     def restart

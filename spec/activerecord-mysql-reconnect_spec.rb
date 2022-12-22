@@ -5,7 +5,7 @@ describe 'activerecord-mysql-reconnect' do
       :host     => '127.0.0.1',
       :username => 'root',
       :database => 'employees',
-      :port     => 14407,
+      :password => 'password',
     )
 
     ActiveRecord::Base.logger = Logger.new($stdout)
@@ -223,7 +223,7 @@ describe 'activerecord-mysql-reconnect' do
         )
 
         # NOTE: Ignore the transaction on :rw mode
-        expect(emp.id).to eq 1001
+        expect(emp.id).to eq 1002
         expect(emp.emp_no).to eq 9998
       end
 

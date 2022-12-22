@@ -1,0 +1,27 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/ruby:3.1.2
+    steps:
+      - checkout
+
+      - run: sudo apt-get update && sudo apt-get install -y mysql-server
+      - run:
+          command: |
+            sudo /etc/init.d/mysql start
+            sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password by 'password';"
+            mysqladmin -u root -h 127.0.0.1 -ppassword ping
+            sudo /etc/init.d/mysql stop
+
+      - run: bundle install
+      - run:
+          command: |
+            DEBUG=1 bundle exec rspec
+
+
+workflows:
+  test-workflow:
+    jobs:
+      - test
